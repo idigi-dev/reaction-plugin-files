@@ -77,8 +77,5 @@
     "branches": [
       "trunk"
     ]
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }
