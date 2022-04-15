@@ -17,18 +17,36 @@ const {
   TempFileStoreWorker
 } = require("@reactioncommerce/file-collections");
 const GridFSStore = require("@reactioncommerce/file-collections-sa-gridfs").default;
+const S3Store = require("@outgrowio/reaction-file-collections-sa-s3").default;
+async function transformWrite(name, transform, fileRecord) {
+  if (!transform) return null;
 
+  const { size, fit, format, type } = transform;
+
+  const {
+    document: {
+      original: { type: typeDefault }
+    }
+  } = fileRecord;
+
+  // Need to update the content type and extension of the file info, too.
+  // The new size gets set correctly automatically by FileCollections package.
+  fileRecord.type(type, { store: name });
+  fileRecord.extension(format, { store: name });
+
+  // resizing image, adding fit, setting output format
+  let nImage = sharp().resize({ width: size, height: size, fit: sharp.fit[fit], withoutEnlargement: true });
+  /// ignores an already formatted image
+  if (typeDefault != type) nImage = nImage.toFormat(format);
+  /// Listener
+  return nImage.on("error", (err) => {
+    throw new ReactionError("error-sharp-resize-internal", err);
+  });
+}
 /**
  * @returns {undefined}
  */
-export default function setUpFileCollections({
-  absoluteUrlPrefix,
-  context,
-  db,
-  Logger,
-  MediaRecords,
-  mongodb
-}) {
+export default function setUpFileCollections({ absoluteUrlPrefix, context, db, Logger, MediaRecords, mongodb }) {
   FileRecord.downloadEndpointPrefix = "/assets/files";
   FileRecord.absoluteUrlPrefix = absoluteUrlPrefix;
 
@@ -65,42 +83,47 @@ export default function setUpFileCollections({
     { name: "small", transform: { size: 235, fit: "cover", format: "png", type: "image/png" } },
     { name: "thumbnail", transform: { size: 100, fit: "cover", format: "png", type: "image/png" } }
   ];
-
   /**
-   * @name buildGFS
+   * @name MediaStore
    * @method
    * @memberof Files
    * @param {Object} options Options
-   * @summary buildGFS returns a fresh GridFSStore instance from provided image transform settings.
-   * @returns {GridFSStore} New GridFS store instance
    */
-  const buildGFS = ({ name, transform }) => (
-    new GridFSStore({
-      chunkSize: gridFSStoresChunkSize,
-      collectionPrefix: "cfs_gridfs.",
-      db,
-      mongodb,
-      name,
-      async transformWrite(fileRecord) {
-        if (!transform) return null;
-
-        const { size, fit, format, type } = transform;
-
-        // Need to update the content type and extension of the file info, too.
-        // The new size gets set correctly automatically by FileCollections package.
-        fileRecord.type(type, { store: name });
-        fileRecord.extension(format, { store: name });
-
-        // resizing image, adding fit, setting output format
-        return sharp()
-          .resize({ width: size, height: size, fit: sharp.fit[fit], withoutEnlargement: true })
-          .toFormat(format)
-          .on("error", (err) => {
-            throw new ReactionError("error-sharp-resize-internal", err);
-          });
-      }
-    })
-  );
+  let MediaStore;
+  if (["s3", "minio"].includes(config.MEDIA_PROVIDER.toLowerCase().trim())) {
+    /**
+     * @name buildGFS
+     * @method
+     * @memberof Files
+     * @param {Object} options Options
+     * @summary buildGFS returns a fresh GridFSStore instance from provided image transform settings.
+     * @returns {GridFSStore} New GridFS store instance
+     */
+    MediaStore = ({ name, transform }) =>
+      new S3Store({
+        name, // Should be provided within buildGFS
+        isPublic: true,
+        objectACL: "public-read",
+        transformWrite: async (fileRecord) => transformWrite(name, transform, fileRecord)
+      });
+  } else {
+    /**
+     * @method
+     * @memberof Files
+     * @param {Object} options Options
+     * @summary buildGFS returns a fresh GridFSStore instance from provided image transform settings.
+     * @returns {GridFSStore} New GridFS store instance
+     */
+    MediaStore = ({ name, transform }) =>
+      new GridFSStore({
+        chunkSize: gridFSStoresChunkSize,
+        collectionPrefix: "cfs_gridfs.",
+        db,
+        mongodb,
+        name,
+        transformWrite: async (fileRecord) => transformWrite(name, transform, fileRecord)
+      });
+  }
 
   /**
    * @name stores
@@ -108,7 +131,7 @@ export default function setUpFileCollections({
    * @constant {Array}
    * @summary Defines an array of GridFSStore by mapping the imgTransform settings over the buildGFS function
    */
-  const stores = imgTransforms.map(buildGFS);
+  const stores = imgTransforms.map(MediaStore);
 
   /**
    * @name tempStore
