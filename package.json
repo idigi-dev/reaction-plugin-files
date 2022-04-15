@@ -1,7 +1,7 @@
 {
   "name": "@idigi/reaction-plugin-files",
   "description": "Files plugin for the Reaction API",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "index.js",
   "type": "module",
   "engines": {
@@ -26,12 +26,12 @@
   "sideEffects": false,
   "dependencies": {
     "@reactioncommerce/api-utils": "^1.16.7",
-    "@reactioncommerce/file-collections": "~0.9.3",
+    "@reactioncommerce/file-collections": "^0.5.0",
     "@reactioncommerce/file-collections-sa-gridfs": "~0.1.5",
     "@reactioncommerce/logger": "~1.1.4",
     "@reactioncommerce/random": "~1.0.2",
     "@reactioncommerce/reaction-error": "~1.0.1",
-    "envalid": "~5.0.0",
+    "envalid": "^7.3.1",
     "image-downloader": "^4.2.0",
     "minio": "^7.0.27",
     "node-fetch": "~2.6.2",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
-    "@commitlint/config-conventional": "^8.3.4",
+    "@commitlint/config-conventional": "^16.2.1",
     "@reactioncommerce/babel-remove-es-create-require": "~1.0.0",
     "@reactioncommerce/data-factory": "~1.0.1",
     "@reactioncommerce/eslint-config": "~2.1.0",
@@ -54,7 +54,7 @@
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.0.1",
     "husky": "^4.2.3",
-    "semantic-release": "^17.0.4"
+    "semantic-release": "^19.0.2"
   },
   "scripts": {
     "lint": "npm run lint:eslint",
