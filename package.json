@@ -25,8 +25,9 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@outgrowio/reaction-file-collections-sa-s3": "^1.1.1",
     "@reactioncommerce/api-utils": "^1.16.7",
-    "@reactioncommerce/file-collections": "^0.5.0",
+    "@reactioncommerce/file-collections": "~0.9.3",
     "@reactioncommerce/file-collections-sa-gridfs": "~0.1.5",
     "@reactioncommerce/logger": "~1.1.4",
     "@reactioncommerce/random": "~1.0.2",
