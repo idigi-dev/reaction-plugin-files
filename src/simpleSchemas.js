@@ -46,6 +46,11 @@ const MediaRecordMetadata = new SimpleSchema({
 
 export const MediaRecord = new SimpleSchema({
   _id: String,
+  langs: {
+    type: Array,
+    optional: true
+  },
+  "langs.$": String,
   metadata: MediaRecordMetadata,
   original: MediaRecordInfo
 });

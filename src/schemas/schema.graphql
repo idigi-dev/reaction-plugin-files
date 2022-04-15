@@ -45,6 +45,9 @@ type MediaRecord {
   "MediaRecord ID"
   _id: ID!
 
+  "locales"
+  langs: [String]
+
   "Custom metadata for the media record"
   metadata: MediaRecordMetadata!
 
@@ -90,6 +93,9 @@ input MediaRecordMetadataInput {
 
 "A FileRecord for a media file"
 input MediaRecordInput {
+  "locales"
+  langs: [String]
+
   "Custom metadata for the media record"
   metadata: MediaRecordMetadataInput!
 
