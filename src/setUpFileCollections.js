@@ -14,9 +14,10 @@ const {
   MongoFileCollection,
   TempFileStore,
   RemoteUrlWorker,
-  TempFileStoreWorker
+  TempFileStoreWorker,
 } = require("@reactioncommerce/file-collections");
-const GridFSStore = require("@reactioncommerce/file-collections-sa-gridfs").default;
+const GridFSStore =
+  require("@reactioncommerce/file-collections-sa-gridfs").default;
 const S3Store = require("@outgrowio/reaction-file-collections-sa-s3").default;
 async function transformWrite(name, transform, fileRecord) {
   if (!transform) return null;
@@ -25,8 +26,8 @@ async function transformWrite(name, transform, fileRecord) {
 
   const {
     document: {
-      original: { type: typeDefault }
-    }
+      original: { type: typeDefault },
+    },
   } = fileRecord;
 
   // Need to update the content type and extension of the file info, too.
@@ -35,7 +36,12 @@ async function transformWrite(name, transform, fileRecord) {
   fileRecord.extension(format, { store: name });
 
   // resizing image, adding fit, setting output format
-  let nImage = sharp().resize({ width: size, height: size, fit: sharp.fit[fit], withoutEnlargement: true });
+  let nImage = sharp().resize({
+    width: size,
+    height: size,
+    fit: sharp.fit[fit],
+    withoutEnlargement: true,
+  });
   /// ignores an already formatted image
   if (typeDefault != type) nImage = nImage.toFormat(format);
   /// Listener
@@ -46,7 +52,14 @@ async function transformWrite(name, transform, fileRecord) {
 /**
  * @returns {undefined}
  */
-export default function setUpFileCollections({ absoluteUrlPrefix, context, db, Logger, MediaRecords, mongodb }) {
+export default function setUpFileCollections({
+  absoluteUrlPrefix,
+  context,
+  db,
+  Logger,
+  MediaRecords,
+  mongodb,
+}) {
   FileRecord.downloadEndpointPrefix = "/assets/files";
   FileRecord.absoluteUrlPrefix = absoluteUrlPrefix;
 
@@ -77,11 +90,41 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
    * @ignore
    */
   const imgTransforms = [
-    { name: "image", transform: { size: 1600, fit: "inside", format: "jpg", type: "image/jpeg" } },
-    { name: "large", transform: { size: 1000, fit: "inside", format: "jpg", type: "image/jpeg" } },
-    { name: "medium", transform: { size: 600, fit: "inside", format: "jpg", type: "image/jpeg" } },
-    { name: "small", transform: { size: 235, fit: "cover", format: "png", type: "image/png" } },
-    { name: "thumbnail", transform: { size: 100, fit: "cover", format: "png", type: "image/png" } }
+    {
+      name: "image",
+      transform: {
+        size: 1600,
+        fit: "inside",
+        format: "jpg",
+        type: "image/jpeg",
+      },
+    },
+    {
+      name: "large",
+      transform: {
+        size: 1000,
+        fit: "inside",
+        format: "jpg",
+        type: "image/jpeg",
+      },
+    },
+    {
+      name: "medium",
+      transform: {
+        size: 600,
+        fit: "inside",
+        format: "jpg",
+        type: "image/jpeg",
+      },
+    },
+    {
+      name: "small",
+      transform: { size: 235, fit: "cover", format: "png", type: "image/png" },
+    },
+    {
+      name: "thumbnail",
+      transform: { size: 100, fit: "cover", format: "png", type: "image/png" },
+    },
   ];
   /**
    * @name MediaStore
@@ -104,7 +147,8 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
         name, // Should be provided within buildGFS
         isPublic: true,
         objectACL: "public-read",
-        transformWrite: async (fileRecord) => transformWrite(name, transform, fileRecord)
+        transformWrite: async (fileRecord) =>
+          transformWrite(name, transform, fileRecord),
       });
   } else {
     /**
@@ -121,7 +165,8 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
         db,
         mongodb,
         name,
-        transformWrite: async (fileRecord) => transformWrite(name, transform, fileRecord)
+        transformWrite: async (fileRecord) =>
+          transformWrite(name, transform, fileRecord),
       });
   }
 
@@ -146,11 +191,13 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
     shouldAllowRequest(req) {
       const { type } = req.uploadMetadata;
       if (typeof type !== "string" || !type.startsWith("image/")) {
-        Logger.info(`shouldAllowRequest received request to upload file of type "${type}" and denied it`);
+        Logger.info(
+          `shouldAllowRequest received request to upload file of type "${type}" and denied it`
+        );
         return false;
       }
       return true;
-    }
+    },
   });
 
   /**
@@ -167,7 +214,7 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
     collection: MediaRecords,
     makeNewStringID: () => Random.id(),
     stores,
-    tempStore
+    tempStore,
   });
 
   /**
@@ -181,9 +228,9 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
     collections: [Media],
     headers: {
       get: {
-        "Cache-Control": "public, max-age=31536000"
-      }
-    }
+        "Cache-Control": "public, max-age=31536000",
+      },
+    },
   });
 
   const onNewRemoteFileRecord = (doc, collection) => {
@@ -210,8 +257,16 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
      * @summary Start a worker to watch for inserted remote URLs and stream them to all stores
      * @see https://github.com/reactioncommerce/reaction-file-collections
      */
-    remoteUrlWorker = new RemoteUrlWorker({ fetch, fileCollections: [Media], onNewFileRecord: onNewRemoteFileRecord });
-    remoteUrlWorker.start();
+    try {
+      remoteUrlWorker = new RemoteUrlWorker({
+        fetch,
+        fileCollections: [Media],
+        onNewFileRecord: onNewRemoteFileRecord,
+      });
+      remoteUrlWorker.start();
+    } catch (error) {
+      console.error(`\n\n==> { remoteUrlWorker }\n`, error, `\n`, ``);
+    }
 
     /**
      * @name fileWorker
@@ -221,8 +276,15 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
      * and then remove the temporary file
      * @see https://github.com/reactioncommerce/reaction-file-collections
      */
-    fileWorker = new TempFileStoreWorker({ fileCollections: [Media], onNewFileRecord: onNewTempFileRecord });
-    fileWorker.start();
+    try {
+      fileWorker = new TempFileStoreWorker({
+        fileCollections: [Media],
+        onNewFileRecord: onNewTempFileRecord,
+      });
+      fileWorker.start();
+    } catch (error) {
+      console.error(`\n\n==> { fileWorker }\n`, error, `\n`, ``);
+    }
   }
 
   return {
@@ -231,6 +293,6 @@ export default function setUpFileCollections({ absoluteUrlPrefix, context, db, L
     Media,
     remoteUrlWorker,
     stores,
-    tempStore
+    tempStore,
   };
 }
