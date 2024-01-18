@@ -1,17 +1,77 @@
-"use strict";var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");var _Object$defineProperty2 = require("@babel/runtime-corejs2/core-js/object/define-property");_Object$defineProperty2(exports, "__esModule", { value: true });exports.default = void 0;var _defineProperty2 = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/define-property"));var _defineProperties = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/define-properties"));var _getOwnPropertyDescriptors = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/get-own-property-descriptors"));var _getOwnPropertyDescriptor = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/get-own-property-descriptor"));var _getOwnPropertySymbols = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/get-own-property-symbols"));var _keys = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/keys"));var _defineProperty3 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/defineProperty"));var _promise = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/promise"));
+"use strict";
+var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");
+var _Object$defineProperty2 = require("@babel/runtime-corejs2/core-js/object/define-property");
+_Object$defineProperty2(exports, "__esModule", { value: true });
+exports.default = void 0;
+var _defineProperty2 = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/object/define-property")
+);
+var _defineProperties = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/object/define-properties")
+);
+var _getOwnPropertyDescriptors = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/object/get-own-property-descriptors")
+);
+var _getOwnPropertyDescriptor = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/object/get-own-property-descriptor")
+);
+var _getOwnPropertySymbols = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/object/get-own-property-symbols")
+);
+var _keys = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/object/keys")
+);
+var _defineProperty3 = _interopRequireDefault(
+  require("@babel/runtime-corejs2/helpers/defineProperty")
+);
+var _promise = _interopRequireDefault(
+  require("@babel/runtime-corejs2/core-js/promise")
+);
 
 var _events = require("events");
 var _tusJsClient = _interopRequireDefault(require("tus-js-client"));
-var _url = _interopRequireDefault(require("./url"));function ownKeys(object, enumerableOnly) {var keys = (0, _keys.default)(object);if (_getOwnPropertySymbols.default) {var symbols = (0, _getOwnPropertySymbols.default)(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return (0, _getOwnPropertyDescriptor.default)(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {(0, _defineProperty3.default)(target, key, source[key]);});} else if (_getOwnPropertyDescriptors.default) {(0, _defineProperties.default)(target, (0, _getOwnPropertyDescriptors.default)(source));} else {ownKeys(Object(source)).forEach(function (key) {(0, _defineProperty2.default)(target, key, (0, _getOwnPropertyDescriptor.default)(source, key));});}}return target;}
+var _url = _interopRequireDefault(require("./url"));
+function ownKeys(object, enumerableOnly) {
+  var keys = (0, _keys.default)(object);
+  if (_getOwnPropertySymbols.default) {
+    var symbols = (0, _getOwnPropertySymbols.default)(object);
+    if (enumerableOnly)
+      symbols = symbols.filter(function (sym) {
+        return (0, _getOwnPropertyDescriptor.default)(object, sym).enumerable;
+      });
+    keys.push.apply(keys, symbols);
+  }
+  return keys;
+}
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        (0, _defineProperty3.default)(target, key, source[key]);
+      });
+    } else if (_getOwnPropertyDescriptors.default) {
+      (0, _defineProperties.default)(
+        target,
+        (0, _getOwnPropertyDescriptors.default)(source)
+      );
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        (0,
+        _defineProperty2.default)(target, key, (0, _getOwnPropertyDescriptor.default)(source, key));
+      });
+    }
+  }
+  return target;
+}
 
-const isNode = typeof process !== "undefined" &&
-process.versions &&
-process.versions.node;
+const isNode =
+  typeof process !== "undefined" && process.versions && process.versions.node;
 
 /**
-                        * @param {String} name name of file
-                        * @returns {String} extension string or ''
-                        */
+ * @param {String} name name of file
+ * @returns {String} extension string or ''
+ */
 function getFileExtensionFromFileName(name) {
   // Seek the last '.' if found
   const found = name.lastIndexOf(".");
@@ -22,9 +82,9 @@ function getFileExtensionFromFileName(name) {
 }
 
 /**
-   * @param {String} url url to split
-   * @returns {String} string after last slash of URL
-   */
+ * @param {String} url url to split
+ * @returns {String} string after last slash of URL
+ */
 function getFileNameFromUrl(url) {
   const result = url.split("?")[0];
   // strip off beginning path or url
@@ -34,10 +94,10 @@ function getFileNameFromUrl(url) {
 }
 
 /**
-   * @param {String} name name of file
-   * @param {String} ext extension of file
-   * @returns {Strong} concat of name and ext
-   */
+ * @param {String} name name of file
+ * @param {String} ext extension of file
+ * @returns {Strong} concat of name and ext
+ */
 function setFileExtension(name, ext) {
   if (!name || !name.length) return name;
   const currentExt = getFileExtensionFromFileName(name);
@@ -46,24 +106,28 @@ function setFileExtension(name, ext) {
 }
 
 /**
-   * @param {String} value value of getter
-   * @param {Object} options options object
-   * @returns {Object} settings object
-   */
+ * @param {String} value value of getter
+ * @param {Object} options options object
+ * @returns {Object} settings object
+ */
 function parseGetterSetterArgs(value, options) {
-  if (!options && (typeof value === "object" && value !== null || typeof value === "undefined")) {
+  if (
+    !options &&
+    ((typeof value === "object" && value !== null) ||
+      typeof value === "undefined")
+  ) {
     return { isGetting: true, resolvedOptions: value || {} };
   }
   return { isGetting: false, resolvedOptions: options || {} };
 }
 
 /**
-   * @param {String} storeName name of store
-   * @param {Object} document files object
-   * @param {String} property index of document object
-   * @param {String} value value to add to document
-   * @returns {void} null
-   */
+ * @param {String} storeName name of store
+ * @param {Object} document files object
+ * @param {String} property index of document object
+ * @param {String} value value to add to document
+ * @returns {void} null
+ */
 function setInfoForStore(storeName, document, property, value) {
   if (!document) return;
 
@@ -102,7 +166,7 @@ class FileRecord extends _events.EventEmitter {
   }
 
   static get downloadEndpointPrefix() {
-    return this._downloadEndpointPrefix || "/files";
+    return this._downloadEndpointPrefix || "/assets/files"; //"/files";
   }
 
   static set downloadEndpointPrefix(value) {
@@ -120,7 +184,8 @@ class FileRecord extends _events.EventEmitter {
 
   static set absoluteUrlPrefix(value) {
     let endpoint = value;
-    if (typeof endpoint === "string" && endpoint.endsWith("/")) endpoint = endpoint.slice(0, -1);
+    if (typeof endpoint === "string" && endpoint.endsWith("/"))
+      endpoint = endpoint.slice(0, -1);
     this._absoluteUrlPrefix = endpoint;
   }
 
@@ -130,7 +195,7 @@ class FileRecord extends _events.EventEmitter {
 
   attachCollection(collection) {
     this.collection = collection || null;
-    this.collectionName = collection && collection.name || null;
+    this.collectionName = (collection && collection.name) || null;
   }
 
   detachCollection() {
@@ -138,7 +203,10 @@ class FileRecord extends _events.EventEmitter {
   }
 
   attachData(data) {
-    if (!data) throw new Error("FileRecord.attachData requires a data argument with some data");
+    if (!data)
+      throw new Error(
+        "FileRecord.attachData requires a data argument with some data"
+      );
     if (isNode && typeof Blob !== "undefined" && data instanceof Blob) {
       // In a Node env only, tus requires that the data be a stream
       this.data = data.stream();
@@ -149,16 +217,27 @@ class FileRecord extends _events.EventEmitter {
   }
 
   static fromBlob(blob, options) {
-    if (typeof Blob === "undefined") throw new Error("FileRecord.fromBlob: Blob must be defined globally");
-    if (!(blob instanceof Blob)) throw new Error("FileRecord.fromBlob: first argument is not an instance of Blob");
+    if (typeof Blob === "undefined")
+      throw new Error("FileRecord.fromBlob: Blob must be defined globally");
+    if (!(blob instanceof Blob))
+      throw new Error(
+        "FileRecord.fromBlob: first argument is not an instance of Blob"
+      );
     const { name, size, type } = blob;
-    const fileRecord = new FileRecord({ original: { name, size, type, updatedAt: new Date() } }, options);
+    const fileRecord = new FileRecord(
+      { original: { name, size, type, updatedAt: new Date() } },
+      options
+    );
     return fileRecord.attachData(blob);
   }
 
   static fromFile(file, options) {
-    if (typeof File === "undefined") throw new Error("FileRecord.fromFile: File must be defined globally");
-    if (!(file instanceof File)) throw new Error("FileRecord.fromFile: first argument is not an instance of File");
+    if (typeof File === "undefined")
+      throw new Error("FileRecord.fromFile: File must be defined globally");
+    if (!(file instanceof File))
+      throw new Error(
+        "FileRecord.fromFile: first argument is not an instance of File"
+      );
     const { lastModified, lastModifiedDate, name, size, type } = file;
 
     // `lastModifiedDate` is deprecated and removed from some browsers.
@@ -171,16 +250,22 @@ class FileRecord extends _events.EventEmitter {
       updatedAt = lastModifiedDate || new Date();
     }
 
-    const fileRecord = new FileRecord({
-      original: { name, size, type, updatedAt } },
-    options);
+    const fileRecord = new FileRecord(
+      {
+        original: { name, size, type, updatedAt },
+      },
+      options
+    );
 
     return fileRecord.attachData(file);
   }
 
   static async fromUrl(url, options) {
     const { fetch } = options;
-    if (!fetch) throw new Error("FileRecord.fromUrl requires that you pass in a fetch function");
+    if (!fetch)
+      throw new Error(
+        "FileRecord.fromUrl requires that you pass in a fetch function"
+      );
     const response = await fetch(url, { method: "HEAD" });
     const headers = response.headers.raw();
     const doc = {
@@ -189,14 +274,15 @@ class FileRecord extends _events.EventEmitter {
         type: headers["content-type"] || null,
         size: Number(headers["content-length"]),
         updatedAt: new Date(headers["last-modified"]),
-        remoteURL: url // This triggers the RemoteUrlWorker to download and store copies
-      } };
+        remoteURL: url, // This triggers the RemoteUrlWorker to download and store copies
+      },
+    };
 
     return new FileRecord(doc, options);
   }
 
   get _id() {
-    return this.document && this.document._id || null;
+    return (this.document && this.document._id) || null;
   }
 
   set _id(value) {
@@ -217,7 +303,9 @@ class FileRecord extends _events.EventEmitter {
 
   async syncDocumentFromDB() {
     if (!this.collection) {
-      throw new Error("Cannot syncDocumentFromDB for a file that is not associated with a collection");
+      throw new Error(
+        "Cannot syncDocumentFromDB for a file that is not associated with a collection"
+      );
     }
     if (!this._id) {
       throw new Error("Cannot syncDocumentFromDB for a file with no _id");
@@ -240,7 +328,11 @@ class FileRecord extends _events.EventEmitter {
   }
 
   isUploaded() {
-    return !!(this.document && this.document.original && this.document.original.uploadedAt);
+    return !!(
+      this.document &&
+      this.document.original &&
+      this.document.original.uploadedAt
+    );
   }
 
   // Uploads the data that is attached to the FileRecord. Returns a Promise that
@@ -248,28 +340,40 @@ class FileRecord extends _events.EventEmitter {
   upload({
     // tus-js-client defaults chunkSize to Infinity but we do 5MB
     chunkSize = 5 * 1024 * 1024,
-    endpoint = FileRecord.absoluteUploadUrl } =
-  {}) {
+    endpoint = FileRecord.absoluteUploadUrl,
+  } = {}) {
     return new _promise.default((resolve, reject) => {
       if (!endpoint) {
-        reject(new Error("Cannot upload file. You must pass \"endpoint\" option to FileRecord.upload or set FileRecord.uploadEndpoint"));
+        reject(
+          new Error(
+            'Cannot upload file. You must pass "endpoint" option to FileRecord.upload or set FileRecord.uploadEndpoint'
+          )
+        );
         return;
       }
 
       if (!this.data) {
-        reject(new Error("Cannot upload a file that is not associated with any data"));
+        reject(
+          new Error("Cannot upload a file that is not associated with any data")
+        );
         return;
       }
 
       if (this._id) {
-        reject(new Error("Cannot upload for a FileRecord that already has an ID"));
+        reject(
+          new Error("Cannot upload for a FileRecord that already has an ID")
+        );
         return;
       }
 
       const { name, size, type } = this.infoForOriginal();
 
       if (!name || !size || !type) {
-        reject(new Error("Cannot upload for a FileRecord until you set a name, size, and type for the original file"));
+        reject(
+          new Error(
+            "Cannot upload for a FileRecord until you set a name, size, and type for the original file"
+          )
+        );
         return;
       }
 
@@ -285,21 +389,25 @@ class FileRecord extends _events.EventEmitter {
           reject(error);
         },
         onChunkComplete: (_, bytesUploaded, bytesTotal) => {
-          const percentage = bytesUploaded / bytesTotal * 100;
-          this.emit("uploadProgress", { bytesUploaded, bytesTotal, percentage });
+          const percentage = (bytesUploaded / bytesTotal) * 100;
+          this.emit("uploadProgress", {
+            bytesUploaded,
+            bytesTotal,
+            percentage,
+          });
         },
         onSuccess: () => {
           const slashPieces = this.tusUploadInstance.url.split("/");
           const tempStoreId = slashPieces.pop();
-          this.document.original = _objectSpread({},
-          this.document.original, {
+          this.document.original = _objectSpread({}, this.document.original, {
             tempStoreId,
-            uploadedAt: new Date() });
+            uploadedAt: new Date(),
+          });
 
           this.tusUploadInstance = null;
           resolve(tempStoreId);
-        } });
-
+        },
+      });
 
       this.startUpload();
     });
@@ -316,41 +424,47 @@ class FileRecord extends _events.EventEmitter {
   }
 
   /**
-     * @method fullClone
-     * @param {Object} [newMetaData] Object to be extended on top of existing metadata object
-     * @returns {FileRecord} A clone of this file record, already saved to database. All file
-     *   data is also copied in the attached stores.
-     */
+   * @method fullClone
+   * @param {Object} [newMetaData] Object to be extended on top of existing metadata object
+   * @returns {FileRecord} A clone of this file record, already saved to database. All file
+   *   data is also copied in the attached stores.
+   */
   async fullClone(newMetaData) {
     const fileCollection = this.collection;
-    if (!fileCollection) throw new Error("Cannot clone a file that is not associated with a collection");
+    if (!fileCollection)
+      throw new Error(
+        "Cannot clone a file that is not associated with a collection"
+      );
 
     if ((fileCollection.options.stores || []).length === 0) {
-      throw new Error("Cannot clone a file that is associated with a collection that has no linked stores. Cloning only available in Node.");
+      throw new Error(
+        "Cannot clone a file that is associated with a collection that has no linked stores. Cloning only available in Node."
+      );
     }
 
     const clonedFileRecord = new FileRecord({
       original: this.document.original,
-      metadata: _objectSpread({},
-      this.metadata || {}, {},
-      newMetaData || {}) });
-
-
+      metadata: _objectSpread({}, this.metadata || {}, {}, newMetaData || {}),
+    });
 
     const cloneRecord = await fileCollection.insert(clonedFileRecord);
 
     // Copy underlying files in all stores
     const storeNames = (0, _keys.default)(this.document.copies || {});
-    const copyingPromises = storeNames.map(async storeName => {
+    const copyingPromises = storeNames.map(async (storeName) => {
       const store = fileCollection.getStore(storeName);
 
       // Get the readStream to read the currently stored file out. We use createReadStreamForFileKey
       // rather than createReadStream in order to bypass any potential transformRead function
-      const readStream = await store.createReadStreamForFileKey(store.fileKey(this));
+      const readStream = await store.createReadStreamForFileKey(
+        store.fileKey(this)
+      );
 
       // Get the writeStream to write back in for the clone. Skip transforms because we are writing
       // file data that was already transformed when originally saved.
-      const writeStream = await store.createWriteStream(cloneRecord, { skipTransform: true });
+      const writeStream = await store.createWriteStream(cloneRecord, {
+        skipTransform: true,
+      });
 
       return new _promise.default((resolve, reject) => {
         writeStream.once("error", reject);
@@ -365,7 +479,11 @@ class FileRecord extends _events.EventEmitter {
   update(modifier, options) {
     return new _promise.default((resolve, reject) => {
       if (!this.collection) {
-        reject(new Error("Cannot update a file that is not associated with a collection"));
+        reject(
+          new Error(
+            "Cannot update a file that is not associated with a collection"
+          )
+        );
         return;
       }
 
@@ -374,22 +492,34 @@ class FileRecord extends _events.EventEmitter {
         return;
       }
 
-      this.collection.update(this._id, modifier, options).then(resolve).catch(reject);
+      this.collection
+        .update(this._id, modifier, options)
+        .then(resolve)
+        .catch(reject);
     });
   }
 
   url(options) {
-    return (0, _url.default)(this, _objectSpread({
-      absoluteUrlPrefix: FileRecord.absoluteUrlPrefix,
-      prefix: FileRecord.downloadEndpointPrefix },
-    options));
-
+    return (0, _url.default)(
+      this,
+      _objectSpread(
+        {
+          absoluteUrlPrefix: FileRecord.absoluteUrlPrefix,
+          prefix: FileRecord.downloadEndpointPrefix,
+        },
+        options
+      )
+    );
   }
 
   remove() {
     return new _promise.default((resolve, reject) => {
       if (!this.collection) {
-        reject(new Error("Cannot remove a file that is not associated with a collection"));
+        reject(
+          new Error(
+            "Cannot remove a file that is not associated with a collection"
+          )
+        );
         return;
       }
 
@@ -398,29 +528,40 @@ class FileRecord extends _events.EventEmitter {
         return;
       }
 
-      this.collection.remove(this._id).
-      then(result => {
-        this.detachCollection();
-        return resolve(result);
-      }).
-      catch(reject);
+      this.collection
+        .remove(this._id)
+        .then((result) => {
+          this.detachCollection();
+          return resolve(result);
+        })
+        .catch(reject);
     });
   }
 
   infoForOriginal() {
-    return this.document && this.document.original || {};
+    return (this.document && this.document.original) || {};
   }
 
   infoForCopy(storeName) {
-    return this.document && this.document.copies && this.document.copies[storeName] || {};
+    return (
+      (this.document &&
+        this.document.copies &&
+        this.document.copies[storeName]) ||
+      {}
+    );
   }
 
   _getOrSetInfo(prop, value, options) {
-    const { isGetting, resolvedOptions } = parseGetterSetterArgs(value, options);
+    const { isGetting, resolvedOptions } = parseGetterSetterArgs(
+      value,
+      options
+    );
 
     const { store } = resolvedOptions;
     if (isGetting) {
-      return store ? this.infoForCopy(store)[prop] : this.infoForOriginal()[prop];
+      return store
+        ? this.infoForCopy(store)[prop]
+        : this.infoForOriginal()[prop];
     }
 
     return setInfoForStore(store, this.document, prop, value);
@@ -435,10 +576,15 @@ class FileRecord extends _events.EventEmitter {
   }
 
   extension(value, options) {
-    const { isGetting, resolvedOptions } = parseGetterSetterArgs(value, options);
+    const { isGetting, resolvedOptions } = parseGetterSetterArgs(
+      value,
+      options
+    );
 
     const { store } = resolvedOptions;
-    const name = store ? this.infoForCopy(store).name : this.infoForOriginal().name;
+    const name = store
+      ? this.infoForCopy(store).name
+      : this.infoForOriginal().name;
     if (!name) return undefined;
 
     if (isGetting) {
@@ -470,32 +616,51 @@ class FileRecord extends _events.EventEmitter {
   }
 
   hasStored(storeName) {
-    return typeof storeName === "string" ? !!this.infoForCopy(storeName).key : !!this.infoForOriginal().key;
+    return typeof storeName === "string"
+      ? !!this.infoForCopy(storeName).key
+      : !!this.infoForOriginal().key;
   }
 
   saveOriginalInfo() {
     if (!this.document) return _promise.default.resolve();
 
-    return this.update({
-      $set: {
-        original: this.document.original } },
+    return this.update(
+      {
+        $set: {
+          original: this.document.original,
+        },
+      },
 
-    { raw: true });
+      { raw: true }
+    );
   }
 
   saveCopyInfo(storeName) {
-    if (!this.document || !this.document.copies || !this.document.copies[storeName]) {
+    if (
+      !this.document ||
+      !this.document.copies ||
+      !this.document.copies[storeName]
+    ) {
       return _promise.default.resolve();
     }
 
-    return this.update({
-      $set: {
-        [`copies.${storeName}`]: this.document.copies[storeName] } },
+    return this.update(
+      {
+        $set: {
+          [`copies.${storeName}`]: this.document.copies[storeName],
+        },
+      },
 
-    { raw: true });
+      { raw: true }
+    );
   }
 
   createReadStreamFromStore(storeName, range) {
-    if (!this.collection) throw new Error("createReadStreamFromStore called without an attached collection");
+    if (!this.collection)
+      throw new Error(
+        "createReadStreamFromStore called without an attached collection"
+      );
     return this.collection.getStore(storeName).createReadStream(this, range);
-  }}exports.default = FileRecord;
+  }
+}
+exports.default = FileRecord;
