@@ -61,6 +61,13 @@ export default function filesStartup(context) {
         console.error(`\n\n==> { /assets/files }\n`, error, `\n`, ``);
       }
     });
+    app.expressApp.use("/files", (...args) => {
+      try {
+        downloadManager.connectHandler(...args);
+      } catch (error) {
+        console.error(`\n\n==> { /assets/files }\n`, error, `\n`, ``);
+      }
+    });
     app.expressApp.use("/assets/uploads", (...args) => {
       try {
         tempStore.connectHandler(...args);
