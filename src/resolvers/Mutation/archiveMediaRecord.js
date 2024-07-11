@@ -1,4 +1,4 @@
-import { decodeMediaRecordOpaqueId, decodeShopOpaqueId } from "../../xforms/id.js";
+import { decodeMediaRecordOpaqueId, decodeProductOpaqueId, decodeShopOpaqueId } from "../../xforms/id.js";
 
 /**
  * @name Mutation/archiveMediaRecord
@@ -13,19 +13,18 @@ import { decodeMediaRecordOpaqueId, decodeShopOpaqueId } from "../../xforms/id.j
  * @returns {Promise<Object>} ArchiveMediaRecordPayload
  */
 export default async function archiveMediaRecord(parentResult, { input }, context) {
-  const {
-    clientMutationId = null,
-    mediaRecordId: opaqueMediaRecordId,
-    shopId: opaqueShopId
-  } = input;
-
-  const mediaRecord = await context.mutations.archiveMediaRecord(context, {
-    mediaRecordId: decodeMediaRecordOpaqueId(opaqueMediaRecordId),
-    shopId: decodeShopOpaqueId(opaqueShopId)
-  });
-
   return {
-    clientMutationId,
-    mediaRecord
+    ...input,
+    mediaRecord: await context.mutations.archiveMediaRecord(context, {
+      ...input,
+      mediaRecordId: decodeMediaRecordOpaqueId(input.mediaRecordId),
+      shopId: decodeShopOpaqueId(input.shopId),
+      ...(input.productIds
+        ? { productIds: input.productIds.map(decodeProductOpaqueId) }
+        : {}),
+      ...(input.variantIds
+        ? { variantIds: input.variantIds.map(decodeProductOpaqueId) }
+        : {})
+    })
   };
 }

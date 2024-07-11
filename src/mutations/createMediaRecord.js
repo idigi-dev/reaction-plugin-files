@@ -1,5 +1,4 @@
 import Random from "@reactioncommerce/random";
-import { MediaRecord } from "../simpleSchemas.js";
 
 /**
  * @summary Create a MediaRecord. It's expected that you've
@@ -8,7 +7,7 @@ import { MediaRecord } from "../simpleSchemas.js";
  * @param {Object} input Input data
  * @returns {Object} MediaRecord
  */
-export default async function createMediaRecord(context, input) {
+export default async function createMediaRecord(context, input, options = {}) {
   const {
     accountId,
     appEvents,
@@ -17,7 +16,14 @@ export default async function createMediaRecord(context, input) {
   } = context;
   const { mediaRecord, shopId } = input;
 
-  await context.validatePermissions("reaction:legacy:mediaRecords", "create:media", { shopId });
+  ///
+  if (options.ignoreValidation !== true) {
+    await context.validatePermissions(
+      "reaction:legacy:mediaRecords",
+      "create:media",
+      { shopId }
+    );
+  }
 
   const doc = {
     ...mediaRecord,
@@ -25,16 +31,33 @@ export default async function createMediaRecord(context, input) {
     metadata: {
       ...mediaRecord.metadata,
       ownerId: accountId,
-      shopId,
       workflow: "published"
     }
   };
+  if (input.shopId) {
+    doc.metadata.shopId = input.shopId;
+  }
+  // convert shopId to shopIds
+  for (const field of Object.keys(doc.metadata)) {
+    if (field.match(/Id$/gi) && typeof doc.metadata[field] === "string") {
+      const fields = `${field}s`;
+      doc.metadata[fields] = [
+        ...new Set(
+          [doc.metadata[field], ...(doc.metadata[fields] || [])].filter(
+            (h) => typeof h === "string"
+          )
+        )
+      ];
+      // delete doc.metadata[field];
+    }
+  }
 
-  MediaRecord.validate(doc);
+  // MediaRecord.validate(doc);
 
-  await MediaRecords.insertOne(doc);
+  const { insertedId } = await MediaRecords.insertOne(doc);
+  if (options.ignoreEvents !== true) {
+    appEvents.emit("afterMediaInsert", { createdBy: userId, mediaRecord: doc });
+  }
 
-  appEvents.emit("afterMediaInsert", { createdBy: userId, mediaRecord: doc });
-
-  return doc;
+  return { insertedId, ...doc };
 }

@@ -22,7 +22,9 @@ export default async function register(app) {
           // Create indexes. We set specific names for backwards compatibility
           // with indexes created by the aldeed:schema-index Meteor package.
           [{ "metadata.productId": 1 }],
+          [{ "metadata.productIds": 1 }],
           [{ "metadata.variantId": 1 }],
+          [{ "metadata.variantIds": 1 }],
           [{ "metadata.priority": 1 }],
 
           // These queries are used by the workers in file-collections package

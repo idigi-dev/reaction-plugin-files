@@ -29,6 +29,13 @@ const MediaRecordMetadata = new SimpleSchema({
     type: String,
     optional: true
   },
+  productIds: {
+    type: Array,
+    optional: true
+  },
+  "productIds.$": {
+    type: String
+  },
   shopId: String,
   type: {
     type: String,
@@ -37,6 +44,13 @@ const MediaRecordMetadata = new SimpleSchema({
   variantId: {
     type: String,
     optional: true
+  },
+  variantIds: {
+    type: Array,
+    optional: true
+  },
+  "variantIds.$": {
+    type: String
   },
   workflow: {
     type: String,

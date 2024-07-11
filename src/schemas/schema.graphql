@@ -30,14 +30,23 @@ type MediaRecordMetadata {
   "ID of the related product, if the media is for a product"
   productId: String
 
+  "IDs of the related products, if the media is for this products"
+  productIds: [String]
+
   "ID of the shop that owns the media"
   shopId: String!
+
+  "IDs of the shops that owns the media"
+  shopIds: [String]
 
   "A string that identifies where this media will be used, for filtering"
   type: String
 
   "ID of the related product variant, if the media is for a product variant"
   variantId: String
+
+  "IDs of the related product variants, if the media is for this product variants"
+  variantIds: [String]
 }
 
 "A FileRecord for a media file"
@@ -84,11 +93,17 @@ input MediaRecordMetadataInput {
   "ID of the related product, if the media is for a product"
   productId: ID
 
+  "IDs of the related products, if the media is for this products"
+  productIds: [String]
+
   "A string that identifies where this media will be used, for filtering"
   type: String
 
   "ID of the related product variant, if the media is for a product variant"
   variantId: ID
+
+  "IDs of the related product variants, if the media is for this product variants"
+  variantIds: [ID]
 }
 
 "A FileRecord for a media file"
@@ -109,10 +124,19 @@ input ArchiveMediaRecordInput {
   clientMutationId: String
 
   "ID of MediaRecord to archive"
-  mediaRecordId: ID!
+  mediaRecordId: ID
 
   "ID of shop that owns this MediaRecord"
-  shopId: ID!
+  shopId: ID
+
+  "IDs of shops that owns this MediaRecord"
+  shopIds: [ID]
+
+  "IDs of the related products"
+  productIds: [ID]
+
+  "IDs of the related product variants"
+  variantIds: [ID]
 }
 
 "Input for the createMediaRecord mutation"
@@ -124,7 +148,10 @@ input CreateMediaRecordInput {
   mediaRecord: MediaRecordInput!
 
   "ID of shop that owns this MediaRecord"
-  shopId: ID!
+  shopId: ID
+
+  "IDs of shops that owns this MediaRecord"
+  shopIds: [ID]
 }
 
 "Input for the deleteMediaRecord mutation"
@@ -133,10 +160,19 @@ input DeleteMediaRecordInput {
   clientMutationId: String
 
   "ID of MediaRecord to delete"
-  mediaRecordId: ID!
+  mediaRecordId: ID
 
   "ID of shop that owns this MediaRecord"
-  shopId: ID!
+  shopId: ID
+
+  "IDs of shops that owns this MediaRecord"
+  shopIds: [ID]
+
+  "IDs of the related products"
+  productIds: [ID]
+
+  "IDs of the related product variants"
+  variantIds: [ID]
 }
 
 "Input for the updateMediaRecordPriority mutation"
@@ -151,7 +187,10 @@ input UpdateMediaRecordPriorityInput {
   priority: Int!
 
   "ID of shop that owns this MediaRecord"
-  shopId: ID!
+  shopId: ID
+
+  "IDs of shops that owns this MediaRecord"
+  shopIds: [ID]
 }
 
 "Response payload for the archiveMediaRecord mutation"
@@ -214,4 +253,7 @@ extend type Mutation {
     "Mutation input"
     input: UpdateMediaRecordPriorityInput!
   ): UpdateMediaRecordPriorityPayload!
+
+  "Test"
+  scriptMediaRecord("Mutation input" input: JSONObject): JSONObject
 }
