@@ -15,6 +15,7 @@ export default async function getMedias(context, input) {
         metadata || {};
 
       return {
+        _id: media._id,
         position:
           index +
           (!variantId
@@ -48,7 +49,14 @@ export default async function getMedias(context, input) {
   if (input.debug)
     console.info(
       `\n»» getMedias:mediaArray`,
-      JSON.stringify({ res, input }, null, 2),
+      JSON.stringify(
+        {
+          res,
+          input
+        },
+        null,
+        2
+      ),
       `\n••••••| ${new Date().toLocaleString()} |••••••\n`
     );
 
